@@ -1,6 +1,15 @@
 <div x-data="{ shown: @entangle('shown') }"
     x-on:close.stop="shown = false"
     x-on:keydown.escape.window="shown = false"
+    x-init="$watch('shown', value => {
+      if (value) {
+        document.getElementById('editOrganization').style.display = 'block';
+      } else {
+        document.getElementById('editOrganization').style.display = 'none';
+      }
+    })"
+    style="display: none;"
+    id="editOrganization"
     >
     <div
         x-show="shown" 
