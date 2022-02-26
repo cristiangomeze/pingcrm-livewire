@@ -60,32 +60,8 @@ class ContactsTest extends TestCase
         $this->actingAs($this->user);
 
         Livewire::test(ContactCrud::class)
-            ->assertViewHas('contacts', fn ($contacts) => count($contacts) === 2)
-            ->assertViewHas('contacts', function ($contacts) {
-                $firstAssert = [
-                    'id' => 1,
-                    'name' => 'Martin Abbott',
-                    'phone' => '555-111-2222',
-                    'city' => 'Murphyland',
-                    'deleted_at' => null,
-                    'organization' => [
-                        "name" => 'Example Organization Inc.'
-                    ]
-                ];
-
-                $secondAssert = [
-                    'id' => 2,
-                    'name' => 'Lynn Kub',
-                    'phone' => '555-333-4444',
-                    'city' => 'Woodstock',
-                    'deleted_at' => null,
-                    'organization' => [
-                        "name" => 'Example Organization Inc.'
-                    ]
-                ];
-                
-                return $contacts[0] === $firstAssert && $contacts[1] === $secondAssert;
-            });
+            ->assertCount('contacts', 2)
+            ->assertSeeInOrder(['martin.abbott@example.com', 'lynn.kub@example.com']);
     }
 
     public function test_can_search_for_contacts()
@@ -95,18 +71,8 @@ class ContactsTest extends TestCase
         Livewire::withQueryParams(['search' => 'Martin'])
             ->test(ContactCrud::class)
             ->assertSet('search', 'Martin')
-            ->assertViewHas('contacts', fn ($contacts) => count($contacts) === 1)
-            ->assertViewHas('contacts', function ($contacts) {
-                return $contacts[0] === [
-                    'id' => 1,
-                    'name' => 'Martin Abbott',
-                    'phone' => '555-111-2222',
-                    'city' => 'Murphyland',
-                    'deleted_at' => null,
-                    'organization' => [
-                        "name" => 'Example Organization Inc.'
-                    ]
-                ];
-            });
+            ->assertCount('contacts', 1)
+            ->assertSee('martin.abbott@example.com')
+            ->assertDontSee('lynn.kub@example.com');
     }
 }
